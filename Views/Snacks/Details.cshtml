@@ -1,0 +1,54 @@
+﻿@model SnackMVCApp.Models.Snack
+
+@{
+    ViewData["Title"] = "Snack Details";
+}
+
+<h2>Snack Details</h2>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <h4 class="card-title">@Model.Name</h4>
+
+        <p><strong>Brand:</strong> @Model.Brand</p>
+
+        <p><strong>Type:</strong> @Model.Type</p>
+
+        <p><strong>Description:</strong> @Model.Description</p>
+
+        <p>
+
+            <strong>Rating:</strong>
+
+            @for (int i = 1; i <= 5; i++)
+            {
+                if (i <= Model.Rating)
+                {
+                    <i class="fa-solid fa-star text-warning"></i>
+                }
+                else
+                {
+                    <i class="fa-regular fa-star text-warning"></i>
+                }
+            }
+
+        </p>
+
+        <p><strong>Price:</strong> R @Model.Price.ToString("0.00")</p>
+
+    </div>
+
+</div>
+
+<br />
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+    <i class="fa-solid fa-pen"></i>
+    Edit
+</a>
+
+<a asp-action="Index" class="btn btn-secondary">
+    Back to List
+</a>

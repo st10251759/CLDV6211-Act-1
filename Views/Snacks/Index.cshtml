@@ -1,0 +1,78 @@
+﻿@model IEnumerable<SnackMVCApp.Models.Snack>
+
+@{
+    ViewData["Title"] = "Snack List";
+}
+
+<h2 class="mb-4">Snack List</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">
+    <i class="fa-solid fa-plus"></i> Add Snack
+</a>
+
+<table class="table table-hover table-bordered">
+
+    <thead style="background-color:#A0D585">
+        <tr>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Rating</th>
+            <th>Price</th>
+            <th style="width:180px">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+@foreach (var item in Model)
+{
+    <tr>
+
+        <td>@item.Name</td>
+
+        <td>@item.Brand</td>
+
+        <td>@item.Type</td>
+
+        <td>@item.Description</td>
+
+        <td>
+            @for (int i = 1; i <= 5; i++)
+            {
+                if (i <= item.Rating)
+                {
+                    <i class="fa-solid fa-star text-warning"></i>
+                }
+                else
+                {
+                    <i class="fa-regular fa-star text-warning"></i>
+                }
+            }
+        </td>
+
+        <td>R @item.Price.ToString("0.00")</td>
+
+        <td>
+
+            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                <i class="fa-solid fa-eye"></i>
+            </a>
+
+            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                <i class="fa-solid fa-pen"></i>
+            </a>
+
+            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                <i class="fa-solid fa-trash"></i>
+            </a>
+
+        </td>
+
+    </tr>
+}
+
+    </tbody>
+
+</table>

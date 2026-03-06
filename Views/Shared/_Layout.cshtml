@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SnackTrack</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Site Styles -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SnackMVCApp.styles.css" asp-append-version="true" />
+</head>
+
+<body>
+
+    <header>
+
+        <nav class="navbar navbar-expand-lg shadow-sm">
+
+            <div class="container">
+
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    <i class="fa-solid fa-cookie-bite"></i>
+                    SnackTrack
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarMain">
+
+                    <span class="navbar-toggler-icon"></span>
+
+                </button>
+
+                <!-- Navigation -->
+                <div class="collapse navbar-collapse" id="navbarMain">
+
+                    <ul class="navbar-nav ms-auto">
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Index">
+
+                                <i class="fa-solid fa-house"></i>
+                                Home
+
+                            </a>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Snacks"
+                               asp-action="Index">
+
+                                <i class="fa-solid fa-burger"></i>
+                                Snacks
+
+                            </a>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Snacks"
+                               asp-action="Create">
+
+                                <i class="fa-solid fa-plus"></i>
+                                Add Snack
+
+                            </a>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Home"
+                               asp-action="Privacy">
+
+                                <i class="fa-solid fa-shield-halved"></i>
+                                Privacy
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <!-- Main Page Content -->
+
+    <div class="container main-container">
+
+        <main role="main" class="pb-3">
+
+            @RenderBody()
+
+        </main>
+
+    </div>
+
+
+    <!-- Footer -->
+
+    <footer class="footer text-center">
+
+        <div class="container">
+
+            <p class="mb-0">
+
+                <i class="fa-solid fa-cookie"></i>
+                SnackTrack © 2026 — Track Your Favourite Snacks
+
+            </p>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- Scripts -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
