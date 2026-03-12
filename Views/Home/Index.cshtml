@@ -2,25 +2,96 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="hero">
-
-    <h1>
-        <i class="fa-solid fa-cookie-bite"></i>
-        Welcome to SnackTrack
-    </h1>
-
-    <p>
-        Track your favourite snacks around campus.
-        Rate them, review them and never forget the best treats!
-    </p>
-
-    <a class="btn-primary"
-       asp-controller="Snacks"
-       asp-action="Index">
-
-        <i class="fa-solid fa-list"></i>
-        View Snacks
-
-    </a>
-
+<!-- Hero Banner -->
+<div class="hero-banner">
+    <img src="~/images/banner-snack.jpg" alt="Snack Banner" class="banner-img">
+    <div class="banner-overlay">
+        <div class="container">
+            <h1 class="banner-title">
+                <i class="fa-solid fa-cookie-bite"></i>
+                Discover Campus Snacks
+            </h1>
+            <p class="banner-text">
+                Track, rate, and share your favorite treats from campus vendors.
+                Never miss the best bites again!
+            </p>
+            <a class="btn-primary btn-lg" asp-controller="Snacks" asp-action="Index">
+                <i class="fa-solid fa-list"></i> Explore Snacks
+            </a>
+        </div>
+    </div>
 </div>
+
+<!-- Features Section -->
+<section class="features main-container">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Why SnackTrack?</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <img src="~/images/chocolate-card.jpg" alt="Chocolate" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa-solid fa-chocolate-bar text-warning"></i>
+                            Rate & Review
+                        </h5>
+                        <p class="card-text">Give stars to your favorites and help others choose wisely.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <img src="~/images/chips-card.jpg" alt="Chips" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa-solid fa-drumstick-bite text-danger"></i>
+                            Find by Type
+                        </h5>
+                        <p class="card-text">Filter chocolates, drinks, chips, and more from our collection.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <img src="~/images/drink-card.jpg" alt="Drink" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa-solid fa-mug-saucer text-info"></i>
+                            Track Prices
+                        </h5>
+                        <p class="card-text">Compare prices and find the best deals around campus.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <a class="btn-primary btn-lg" asp-controller="Snacks" asp-action="Create">
+                <i class="fa-solid fa-plus"></i> Add Your Snack
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats bg-light py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <h3 class="text-primary">50+</h3>
+                <p>Snacks Tracked</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="text-success">4.7</h3>
+                <p>Avg Rating</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="text-warning">10+</h3>
+                <p>Brands</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="text-info">6</h3>
+                <p>Types</p>
+            </div>
+        </div>
+    </div>
+</section>
