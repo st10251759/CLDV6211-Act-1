@@ -1,123 +1,121 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SnackMVCApp.Data;
 using SnackMVCApp.Models;
 
 namespace SnackMVCApp.Controllers
 {
     public class SnacksController : Controller
     {
-        private static List<Snack> snacks = new List<Snack>()
-        {
-            new Snack{
-                Id = 1,
-                Name = "TopDeck",
-                Brand = "Cadbury",
-                Type = SnackType.Chocolate,
-                Description = "Layers of white and milk chocolate",
-                Rating = 5,
-                Price = 18
-            },
-            new Snack{
-                Id = 2,
-                Name = "Bubble Tea",
-                Brand = "KungFu Tea",
-                Type = SnackType.Drink,
-                Description = "Sweet tea with tapioca pearls",
-                Rating = 4,
-                Price = 35
-            }
-        };
+        private readonly ApplicationDbContext _context;
 
-        // READ
-        public IActionResult Index()
+        // Constructor injects DbContext via DI
+        public SnacksController(ApplicationDbContext context)
         {
-            return View(snacks);
+            _context = context;
         }
 
-        // DETAILS
-        public IActionResult Details(int id)
+        // READ - Index (List all)
+        public async Task<IActionResult> Index()
         {
-            var snack = snacks.FirstOrDefault(s => s.Id == id);
+            return View(await _context.Snacks.ToListAsync());
+        }
 
-            if (snack == null)
-                return NotFound();
+        // READ - Details
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var snack = await _context.Snacks.FirstOrDefaultAsync(s => s.Id == id);
+            if (snack == null) return NotFound();
 
             return View(snack);
         }
 
-        // CREATE
+        // CREATE - GET
         public IActionResult Create()
         {
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Create(Snack snack)
-        {
-            if (ModelState.IsValid)
-            {
-                snack.Id = snacks.Max(s => s.Id) + 1;
-                snacks.Add(snack);
-
-                return RedirectToAction("Index");
-            }
-
-            return View(snack);
-        }
-
-        // EDIT
-        public IActionResult Edit(int id)
-        {
-            var snack = snacks.FirstOrDefault(s => s.Id == id);
-
-            if (snack == null)
-                return NotFound();
-
-            return View(snack);
-        }
-
+        // CREATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Snack snack)
+        public async Task<IActionResult> Create(Snack snack)
         {
             if (ModelState.IsValid)
             {
-                var existingSnack = snacks.FirstOrDefault(s => s.Id == snack.Id);
-
-                if (existingSnack == null)
-                    return NotFound();
-
-                existingSnack.Name = snack.Name;
-                existingSnack.Brand = snack.Brand;
-                existingSnack.Type = snack.Type;
-                existingSnack.Description = snack.Description;
-                existingSnack.Rating = snack.Rating;
-                existingSnack.Price = snack.Price;
-
+                _context.Add(snack);  // EF auto-generates Id
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
             return View(snack);
         }
 
-        // DELETE
-        public IActionResult Delete(int id)
+        // EDIT - GET
+        public async Task<IActionResult> Edit(int? id)
         {
-            var snack = snacks.FirstOrDefault(s => s.Id == id);
+            if (id == null) return NotFound();
 
-            if (snack == null)
-                return NotFound();
+            var snack = await _context.Snacks.FindAsync(id);
+            if (snack == null) return NotFound();
 
             return View(snack);
         }
 
+        // EDIT - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Snack snack)
+        {
+            if (id != snack.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(snack);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!SnackExists(snack.Id)) return NotFound();
+                    throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(snack);
+        }
+
+        // DELETE - GET (Confirm)
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var snack = await _context.Snacks.FirstOrDefaultAsync(s => s.Id == id);
+            if (snack == null) return NotFound();
+
+            return View(snack);
+        }
+
+        // DELETE - POST
         [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var snack = snacks.FirstOrDefault(s => s.Id == id);
+            var snack = await _context.Snacks.FindAsync(id);
+            if (snack != null)
+            {
+                _context.Snacks.Remove(snack);
+                await _context.SaveChangesAsync();
+            }
 
-            snacks.Remove(snack);
+            return RedirectToAction(nameof(Index));
+        }
 
-            return RedirectToAction("Index");
+        private bool SnackExists(int id)
+        {
+            return _context.Snacks.Any(e => e.Id == id);
         }
     }
 }
