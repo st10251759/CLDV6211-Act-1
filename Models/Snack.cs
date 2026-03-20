@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SnackMVCApp.Models
 {
@@ -35,5 +36,12 @@ namespace SnackMVCApp.Models
         [Range(0, 1000)]
         [DataType(DataType.Currency)]
         public decimal Price { get; set; }
+
+        // Stores the Azurite/Azure Blob URL in the database
+        public string? ImageUrl { get; set; }
+
+        // NOT saved to DB - only used for the file upload form
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
     }
 }

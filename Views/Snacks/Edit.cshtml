@@ -6,9 +6,13 @@
 
 <h2 class="mb-4">Edit Snack</h2>
 
-<form asp-action="Edit" method="post">
+@* enctype="multipart/form-data" required for file uploads *@
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
 
     <input type="hidden" asp-for="Id" />
+
+    @* Preserve existing ImageUrl so it's not lost if no new image is uploaded *@
+    <input type="hidden" asp-for="ImageUrl" />
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -26,12 +30,10 @@
 
     <div class="mb-3">
         <label asp-for="Type" class="form-label"></label>
-
         <select asp-for="Type"
                 class="form-select"
                 asp-items="Html.GetEnumSelectList<SnackMVCApp.Models.SnackType>()">
         </select>
-
         <span asp-validation-for="Type" class="text-danger"></span>
     </div>
 
@@ -43,7 +45,6 @@
 
     <div class="mb-3">
         <label asp-for="Rating" class="form-label"></label>
-
         <select asp-for="Rating" class="form-select">
             <option value="">Select Rating</option>
             <option value="1">⭐</option>
@@ -52,7 +53,6 @@
             <option value="4">⭐⭐⭐⭐</option>
             <option value="5">⭐⭐⭐⭐⭐</option>
         </select>
-
         <span asp-validation-for="Rating" class="text-danger"></span>
     </div>
 
@@ -60,6 +60,39 @@
         <label asp-for="Price" class="form-label"></label>
         <input asp-for="Price" class="form-control" />
         <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    @* CURRENT IMAGE PREVIEW *@
+    <div class="mb-3">
+        <label class="form-label">
+            <i class="fa-solid fa-image"></i> Current Image
+        </label>
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div>
+                <img src="@Model.ImageUrl"
+                     alt="@Model.Name"
+                     style="height:120px; width:160px; object-fit:cover; border-radius:8px; border:2px solid #A0D585;"
+                     class="mb-2" />
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">
+                <i class="fa-solid fa-image"></i> No image uploaded yet.
+            </p>
+        }
+    </div>
+
+    @* UPLOAD NEW IMAGE *@
+    <div class="mb-3">
+        <label asp-for="ImageFile" class="form-label">
+            Upload New Image (optional — replaces current)
+        </label>
+        <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+        <span class="text-muted" style="font-size:0.85rem">
+            Leave empty to keep current image.
+        </span>
     </div>
 
     <button type="submit" class="btn btn-primary">

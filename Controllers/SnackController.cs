@@ -2,26 +2,28 @@
 using Microsoft.EntityFrameworkCore;
 using SnackMVCApp.Data;
 using SnackMVCApp.Models;
+using SnackMVCApp.Services;
 
 namespace SnackMVCApp.Controllers
 {
     public class SnacksController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly BlobService _blobService;
 
-        // Constructor injects DbContext via DI
-        public SnacksController(ApplicationDbContext context)
+        public SnacksController(ApplicationDbContext context, BlobService blobService)
         {
             _context = context;
+            _blobService = blobService;
         }
 
-        // READ - Index (List all)
+        // READ - Index
         public async Task<IActionResult> Index()
         {
             return View(await _context.Snacks.ToListAsync());
         }
 
-        // READ - Details
+        // DETAILS
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -45,7 +47,13 @@ namespace SnackMVCApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(snack);  // EF auto-generates Id
+                // Upload image to Azurite if file was selected
+                if (snack.ImageFile != null && snack.ImageFile.Length > 0)
+                {
+                    snack.ImageUrl = await _blobService.UploadAsync(snack.ImageFile);
+                }
+
+                _context.Add(snack);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -74,6 +82,15 @@ namespace SnackMVCApp.Controllers
             {
                 try
                 {
+                    // If a new image was uploaded, delete old blob and upload new one
+                    if (snack.ImageFile != null && snack.ImageFile.Length > 0)
+                    {
+                        if (!string.IsNullOrEmpty(snack.ImageUrl))
+                            await _blobService.DeleteAsync(snack.ImageUrl);
+
+                        snack.ImageUrl = await _blobService.UploadAsync(snack.ImageFile);
+                    }
+
                     _context.Update(snack);
                     await _context.SaveChangesAsync();
                 }
@@ -87,7 +104,7 @@ namespace SnackMVCApp.Controllers
             return View(snack);
         }
 
-        // DELETE - GET (Confirm)
+        // DELETE - GET
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -106,10 +123,13 @@ namespace SnackMVCApp.Controllers
             var snack = await _context.Snacks.FindAsync(id);
             if (snack != null)
             {
+                // Delete image from Azurite blob storage
+                if (!string.IsNullOrEmpty(snack.ImageUrl))
+                    await _blobService.DeleteAsync(snack.ImageUrl);
+
                 _context.Snacks.Remove(snack);
                 await _context.SaveChangesAsync();
             }
-
             return RedirectToAction(nameof(Index));
         }
 

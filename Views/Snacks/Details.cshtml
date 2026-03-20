@@ -8,6 +8,24 @@
 
 <div class="card shadow-sm">
 
+    @* SNACK IMAGE FROM BLOB STORAGE *@
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl"
+             alt="@Model.Name"
+             class="card-img-top"
+             style="height:300px; object-fit:cover;" />
+    }
+    else
+    {
+        <div style="height:200px; background:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:8px 8px 0 0;">
+            <span class="text-muted">
+                <i class="fa-solid fa-image fa-3x"></i>
+                <p>No Image Available</p>
+            </span>
+        </div>
+    }
+
     <div class="card-body">
 
         <h4 class="card-title">@Model.Name</h4>
@@ -19,9 +37,7 @@
         <p><strong>Description:</strong> @Model.Description</p>
 
         <p>
-
             <strong>Rating:</strong>
-
             @for (int i = 1; i <= 5; i++)
             {
                 if (i <= Model.Rating)
@@ -33,7 +49,6 @@
                     <i class="fa-regular fa-star text-warning"></i>
                 }
             }
-
         </p>
 
         <p><strong>Price:</strong> R @Model.Price.ToString("0.00")</p>
@@ -45,8 +60,7 @@
 <br />
 
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
-    <i class="fa-solid fa-pen"></i>
-    Edit
+    <i class="fa-solid fa-pen"></i> Edit
 </a>
 
 <a asp-action="Index" class="btn btn-secondary">

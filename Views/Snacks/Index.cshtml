@@ -14,6 +14,7 @@
 
     <thead style="background-color:#A0D585">
         <tr>
+            <th>Image</th>
             <th>Name</th>
             <th>Brand</th>
             <th>Type</th>
@@ -21,63 +22,71 @@
             <th>Rating</th>
             <th>Price</th>
             <th style="width:280px">Actions</th>
-
         </tr>
     </thead>
 
     <tbody>
 
-@foreach (var item in Model)
-{
-    <tr>
+        @foreach (var item in Model)
+        {
+            <tr>
 
-        <td>@item.Name</td>
+                @* BLOB IMAGE THUMBNAIL *@
+                <td class="text-center" style="width:90px;">
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl"
+                             alt="@item.Name"
+                             style="height:55px; width:75px; object-fit:cover; border-radius:6px;" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">
+                            <i class="fa-solid fa-image fa-lg"></i>
+                        </span>
+                    }
+                </td>
 
-        <td>@item.Brand</td>
+                <td>@item.Name</td>
+                <td>@item.Brand</td>
+                <td>@item.Type</td>
+                <td>@item.Description</td>
 
-        <td>@item.Type</td>
+                <td>
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= item.Rating)
+                        {
+                            <i class="fa-solid fa-star text-warning"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-regular fa-star text-warning"></i>
+                        }
+                    }
+                </td>
 
-        <td>@item.Description</td>
-
-        <td>
-            @for (int i = 1; i <= 5; i++)
-            {
-                if (i <= item.Rating)
-                {
-                    <i class="fa-solid fa-star text-warning"></i>
-                }
-                else
-                {
-                    <i class="fa-regular fa-star text-warning"></i>
-                }
-            }
-        </td>
-
-        <td>R @item.Price.ToString("0.00")</td>
+                <td>R @item.Price.ToString("0.00")</td>
 
                 <td class="text-center">
                     <div class="btn-group btn-group-sm" role="group">
                         <a asp-action="Details" asp-route-id="@item.Id"
-                           class="btn btn-info action-btn"
-                           title="View Details">
+                           class="btn btn-info action-btn" title="View Details">
                             <i class="fa-solid fa-eye"></i> View
                         </a>
                         <a asp-action="Edit" asp-route-id="@item.Id"
-                           class="btn btn-primary action-btn"
-                           title="Edit Snack">
+                           class="btn btn-primary action-btn" title="Edit Snack">
                             <i class="fa-solid fa-pen"></i> Edit
                         </a>
                         <a asp-action="Delete" asp-route-id="@item.Id"
-                           class="btn btn-danger action-btn"
-                           title="Delete Snack">
+                           class="btn btn-danger action-btn" title="Delete Snack">
                             <i class="fa-solid fa-trash"></i> Delete
                         </a>
                     </div>
                 </td>
 
-
-    </tr>
-}
+            </tr>
+        }
 
     </tbody>
 
