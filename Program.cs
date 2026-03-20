@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SnackMVCApp.Data;
+using SnackMVCApp.Services;
 
 namespace SnackMVCApp
 {
@@ -13,6 +14,9 @@ namespace SnackMVCApp
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Add after AddDbContext line
+            builder.Services.AddScoped<BlobService>();
 
             var app = builder.Build();
 
