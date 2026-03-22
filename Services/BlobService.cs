@@ -6,26 +6,33 @@ namespace SnackMVCApp.Services
     public class BlobService
     {
         private readonly BlobContainerClient _containerClient;
+        private bool _containerInitialised = false;
 
         public BlobService(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("BlobConnection");
-
             var blobServiceClient = new BlobServiceClient(connectionString);
 
-            // Get or create the snack-images container
+            // Only get the client reference — do NOT call CreateIfNotExists here
             _containerClient = blobServiceClient.GetBlobContainerClient("snack-images");
-
-            // Only creates if it doesn't already exist - safe to call every time
-            _containerClient.CreateIfNotExists(PublicAccessType.Blob);
         }
 
-        // UPLOAD - returns the public URL of the uploaded image
+        // Call this before any operation — creates container only once
+        private async Task EnsureContainerExistsAsync()
+        {
+            if (!_containerInitialised)
+            {
+                await _containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+                _containerInitialised = true;
+            }
+        }
+
+        // UPLOAD
         public async Task<string> UploadAsync(IFormFile file)
         {
-            // Unique file name to avoid overwriting existing blobs
-            string blobName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+            await EnsureContainerExistsAsync();
 
+            string blobName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
             BlobClient blobClient = _containerClient.GetBlobClient(blobName);
 
             using (var stream = file.OpenReadStream())
@@ -36,18 +43,17 @@ namespace SnackMVCApp.Services
                 });
             }
 
-            // Return full URL to store in DB
             return blobClient.Uri.ToString();
         }
 
-        // DELETE - removes blob using its URL
+        // DELETE
         public async Task DeleteAsync(string imageUrl)
         {
             if (string.IsNullOrEmpty(imageUrl)) return;
 
-            // Extract just the blob filename from the full URL
-            string blobName = Path.GetFileName(new Uri(imageUrl).LocalPath);
+            await EnsureContainerExistsAsync();
 
+            string blobName = Path.GetFileName(new Uri(imageUrl).LocalPath);
             BlobClient blobClient = _containerClient.GetBlobClient(blobName);
 
             await blobClient.DeleteIfExistsAsync();
