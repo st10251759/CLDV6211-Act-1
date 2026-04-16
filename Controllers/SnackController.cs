@@ -25,11 +25,35 @@ namespace SnackMVCApp.Controllers
 
         // 📋 READ - Index: Shows ALL snacks in a table
         // GET /Snacks → Snack/Index.cshtml
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            // Async query gets all snacks from SQL database
-            var snacks = await _context.Snacks.ToListAsync();
-            return View(snacks);
+            ViewData["CurrentFilter"] = searchString;
+
+            // Start with queryable collection
+            var snacks = _context.Snacks.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                // Normalize search string
+                searchString = searchString.Trim();
+
+                // Main text search (EF-translatable)
+                snacks = snacks.Where(s =>
+                    s.Name.Contains(searchString) ||
+                    s.Brand.Contains(searchString) ||
+                    s.Description.Contains(searchString)
+                );
+
+                // Try to match enum (Type)
+                if (Enum.TryParse<SnackType>(searchString, true, out var parsedType))
+                {
+                    snacks = snacks.Union(
+                        _context.Snacks.Where(s => s.Type == parsedType)
+                    );
+                }
+            }
+
+            return View(await snacks.AsNoTracking().ToListAsync());
         }
 
         // 👁️ READ - Details: Shows ONE snack with image
